@@ -1,0 +1,106 @@
+<h1>Ti.Storekit Module</h1>
+<h2>Description</h2>
+<p>The Storekit module allows you access to Apple's in-app purchasing mechanisms.</p>
+<h2>How Do I Get Started?</h2>
+<p>Read our Wiki page to get started quickly:</p>
+<p>http://wiki.appcelerator.org/display/guides/StoreKit+Module+In-App+Purchase+Testing</p>
+<h2>Getting Started</h2>
+<p>View the <a href="https://wiki.appcelerator.org/display/tis/Using+Titanium+Modules">Using Titanium Modules</a> document for instructions on getting
+started with using this module in your application.</p>
+<h2>Accessing the Storekit Module</h2>
+<p>To access this module from JavaScript, you would do the following:</p>
+<pre><code>var Storekit = require('ti.storekit');
+</code></pre>
+<h2>Functions</h2>
+<h3>requestProducts(ids[array], callback(e){})</h3>
+<p>Requests to see if products identified by the strings in the <em>id</em> array are available.
+The <em>callback</em> function is called upon completion of the request, with the following event
+information:</p>
+<ul>
+<li>success[boolean]: Whether or not the request succeeded</li>
+<li>message[string]: If the request failed, the reason why</li>
+<li>products[array]: An array of <em><a href="product.html">Ti.Storekit.Product</a></em> objects which represent the valid products retrieved</li>
+<li>invalid[array]: An array of identifiers passed to the request that did not correspond to a product ID. Only present when at least one requested product is invalid.</li>
+</ul>
+<p>Returns a <em><a href="productRequest.html">Ti.Storekit.ProductRequest</a></em> object.</p>
+<h3>purchase(object, callback(e){})</h3>
+<p>Purchases the <em><a href="product.html">Ti.Storekit.Product</a></em> object passed to it.  The <em>callback</em> function is called when
+the purchase request's state changes, with the following event information:</p>
+<ul>
+<li>payment[object]: The <em><a href="payment.html">Ti.Storekit.Payment</a></em> object associated with the purchase</li>
+<li>state[int]: A constant specifying the state</li>
+</ul>
+<p>For state <em>Ti.Storekit.FAILED</em>:</p>
+<ul>
+<li>cancelled[boolean]: Whether the failure is due to cancellation of the request or not</li>
+<li>message[string]: If not cancelled, what the error message is</li>
+</ul>
+<p>For state <em>Ti.Storekit.PURCHASED</em> or <em>Ti.Storekit.RESTORED</em>:</p>
+<ul>
+<li>date[date]: Transaction date</li>
+<li>identifier[string]: The transaction identifier</li>
+<li>receipt[object]: A blob of type "text/json" which contains the receipt information for the purchase.</li>
+</ul>
+<p>Returns a <em><a href="payment.html">Ti.Storekit.Payment</a></em> object.</p>
+<h3>verifyReceipt(args[object])</h3>
+<p>Verifies that a receipt (a blob object) passed from a Storekit purchase is valid. Note that you rarely need to do this
+step in-app. It is much more likely that you would want to do this step on your own server to confirm from Apple that a
+purchase is legitimate.</p>
+<p>Takes one argument, a dictionary with the following values:</p>
+<ul>
+<li>receipt[blob]: A receipt retrieved from a call to Ti.Storekit.purchase's callback evt.receipt.</li>
+<li>callback[function]: A function to be called when the verification request completes.</li>
+<li>sandbox[bool, defaults to false]: Whether or not to use Apple's Sandbox verification server.</li>
+<li>sharedSecret[string, optional]: The shared secret for your app that you creates in iTunesConnect; required for verifying auto-renewable subscriptions.</li>
+</ul>
+<p>The <em>callback</em> function is called when the verification request completes, with the following event information:</p>
+<ul>
+<li>success[boolean]: Whether or not the request succeeded</li>
+<li>valid[boolean]: Whether or not the receipt is valid</li>
+<li>receipt[string]: The receipt identifier</li>
+<li>message[string]: If <em>success</em> is false, the error message</li>
+</ul>
+<p>Returns a <em><a href="receiptRequest.html">Ti.Storekit.ReceiptRequest</a></em> object.</p>
+<h3>restoreCompletedTransactions()</h3>
+<p>Asks the payment queue to restore previously completed purchases. Note that calling this may ask the user to authenticate!
+It is recommended that you give the user the option to restore their past purchases via a button, and invoke this method
+only after the user touches it.</p>
+<h2>Properties</h2>
+<h3>canMakePayments[boolean] (read-only)</h3>
+<p>Whether or not payments can be made via Storekit.</p>
+<h2>Constants</h2>
+<h3>PURCHASING[int]</h3>
+<p>The PURCHASING state during purchase request processing.</p>
+<h3>PURCHASED[int]</h3>
+<p>The PURCHASED state during purchase request processing.</p>
+<h3>FAILED[int]</h3>
+<p>The FAILED state during purchase request processing.</p>
+<h3>RESTORED[int]</h3>
+<p>The RESTORED state during purchase request processing.</p>
+<h2>Events</h2>
+<h3>restoredCompletedTransactions</h3>
+<p>Occurs if you call Ti.Storekit.restoreCompletedTransactions and no errors are encountered. The following event information
+will be provided:</p>
+<ul>
+<li>error[string]: An error message, if one was encountered.</li>
+<li>transactions[array]: If no errors were encountered, all of the transactions that were restored.</li>
+</ul>
+<p>Each transaction can contain the following properties:</p>
+<ul>
+<li>state[int]: The current state of the transaction; most likely <em>To.Storekit.RESTORED</em>.</li>
+<li>identifier[string]: A string that uniquely identifies a successful payment transaction.</li>
+<li>productIdentifier[string]: A string used to identify a product that can be purchased from within your application.</li>
+<li>quantity[int]: The number of items the user wants to purchase.</li>
+<li>date[date]: The date the transaction was added to the App Store's payment queue.</li>
+<li>receipt[object]: A blob of type "text/json" which contains the receipt information for the purchase.</li>
+</ul>
+<h2>Usage</h2>
+<p>See example.</p>
+<h2>Author</h2>
+<p>Jeff Haynie</p>
+<h2>Module History</h2>
+<p>View the <a href="changelog.html">change log</a> for this module.</p>
+<h2>Feedback and Support</h2>
+<p>Please direct all questions, feedback, and concerns to <a href="mailto:info@appcelerator.com?subject=iOS%20Storekit%20Module">info@appcelerator.com</a>.</p>
+<h2>License</h2>
+<p>Copyright(c) 2010-2011 by Appcelerator, Inc. All Rights Reserved. Please see the LICENSE file included in the distribution for further details.</p>
